@@ -4,6 +4,12 @@ The CDS Hooks Sandbox (coined here as "Sandbox") is a tool that allows users to 
 
 Try out the live tool at [http://sandbox.cds-hooks.org](http://sandbox.cds-hooks.org)!
 
+- [How it Works](#how-it-works)
+- [Testing w/ Secured FHIR Servers](#testing-w-secured-fhir-servers)
+- [Public Key for JWT Access](#public-key-for-jwt-access)
+- [Local Development](#local-development)
+- [Build and Contribution](#build-and-contribution)
+
 
 ## How it Works
 
@@ -40,6 +46,15 @@ The tool also allows for testing against different patients and FHIR servers.
 Currently, launching the Sandbox by simply navigating to `http://sandbox.cds-hooks.org` means the tool can only be tested against an open FHIR server endpoint. However, the Sandbox tool can be launched as a SMART application from an [HSPC sandbox instance](https://sandbox.hspconsortium.org), and the tool can then test against a secured FHIR server endpoint. This endpoint would be the FHIR server of the HSPC sandbox instance the CDS Hooks Sandbox is launched from. By default, an app is configured on each HSPC sandbox, CDS Hooks Sandbox, which allows users to launch the Sandbox as a SMART app from their own HSPC instance and test the Sandbox against a secured FHIR endpoint.
 
 Note: When launching the Sandbox in this manner, the option to change the FHIR server in context is removed from the tool. This is because the Sandbox will be passed an `access_token` when launched as a SMART application from HSPC. This token will be passed to CDS Services in requests, and used to query the FHIR server for any additional extra queries down the workflow.
+
+## Public Key for JWT Access
+
+The Sandbox supports security from the CDS Hooks spec. When CDS Services are invoked with a request from the Sandbox, they are sent a JWT in the `Authorization` header (for more details, see [Trusting EHRs](http://cds-hooks.org/specification/1.0/#trusting-ehrs)). These JWTs are signed using a private key with the ES256 encryption algorithm. 
+
+The public key CDS Services need to sign the JWT on their end is at a public well known endpoint, where the Sandbox provides a JWK that details the signing algorithm used, the `kid` field to compare with the `kid` property in the JWT, among other details. CDS Services may take this JWK and convert it into a PEM file that can be used to sign the JWT. The public well-known endpoint for the Sandbox is at the following URL:
+```
+http://sandbox.cds-hooks.org/.well-known/jwks.json
+```
 
 ## Local development
 
